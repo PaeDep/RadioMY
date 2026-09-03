@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio PF</title>
+    <title>Radio MY</title>
     <!-- Library hls.js untuk support stream .m3u8 -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
@@ -35,15 +35,16 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: relative;
         }
         .logo-container {
             flex: 1;
             width: 100%;
-            max-height: 55vh;
+            max-height: 48vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .logo-container img {
             max-width: 100%;
@@ -58,12 +59,74 @@
             margin-bottom: 8px;
             text-align: center;
         }
-        
-        /* PLAYER DIKECILKAN */
+
+        /* ANIMATED EQUALIZER BARS */
+        .eq-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            height: 35px;
+            width: 100%;
+            margin-bottom: 10px;
+            background: #141414;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+        }
+        .eq-bar {
+            width: 6px;
+            height: 5px;
+            background: linear-gradient(to top, #00e676, #00b0ff);
+            border-radius: 3px;
+            transition: height 0.1s ease;
+        }
+
+        /* Mode bila lagu tengah Play (Animasi Jalan) */
+        .playing .eq-bar {
+            animation: bounce 0.8s infinite alternate ease-in-out;
+        }
+
+        /* Timing berbeza setiap bar supaya nampak rawak/natural */
+        .playing .eq-bar:nth-child(1) { animation-duration: 0.4s; }
+        .playing .eq-bar:nth-child(2) { animation-duration: 0.7s; }
+        .playing .eq-bar:nth-child(3) { animation-duration: 0.5s; }
+        .playing .eq-bar:nth-child(4) { animation-duration: 0.9s; }
+        .playing .eq-bar:nth-child(5) { animation-duration: 0.6s; }
+        .playing .eq-bar:nth-child(6) { animation-duration: 0.8s; }
+        .playing .eq-bar:nth-child(7) { animation-duration: 0.5s; }
+        .playing .eq-bar:nth-child(8) { animation-duration: 0.7s; }
+        .playing .eq-bar:nth-child(9) { animation-duration: 0.4s; }
+        .playing .eq-bar:nth-child(10){ animation-duration: 0.8s; }
+
+        @keyframes bounce {
+            0% { height: 4px; }
+            100% { height: 28px; }
+        }
+
+        /* CONTROLS (STOP / PLAY BUTTON & AUDIO) */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .btn-playpause {
+            background-color: #00e676;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         audio {
-            width: 80%; /* Dikecilkan dari 100% ke 80% */
-            height: 32px; /* Tinggi player dikecilkan */
-            outline: none;
+            display: none; /* Sembunyikan player binaan browser untuk kemas */
         }
 
         /* BAHAGIAN KANAN: BUTANG SENARAI RADIO */
@@ -123,18 +186,37 @@
 </head>
 <body>
 
-    <!-- KIRI: AUDIO PLAYER -->
+    <!-- KIRI: AUDIO PLAYER & EQUALIZER -->
     <div class="left-panel">
         <div class="logo-container">
             <img id="current-logo" src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="Logo Radio">
         </div>
         <div class="station-title" id="current-title">Suria FM</div>
-        <audio id="audio-player" controls autoplay></audio>
+
+        <!-- BAR EQUALIZER NEON -->
+        <div class="eq-container playing" id="eq-box">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-playpause" id="toggle-btn" onclick="togglePlay()">⏸ PAUSE</button>
+        </div>
+
+        <audio id="audio-player" autoplay></audio>
     </div>
 
     <!-- KANAN: BUTANG RADIO MY -->
     <div class="right-panel">
-        <div class="header-tag">RADIO PF</div>
+        <div class="header-tag"># RADIO MY</div>
         <div class="station-grid">
             <button class="btn-station active" onclick="playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', this)">
                 <img src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png"> <span>Suria FM</span>
@@ -156,6 +238,8 @@
 
     <script>
         var player = document.getElementById('audio-player');
+        var eqBox = document.getElementById('eq-box');
+        var toggleBtn = document.getElementById('toggle-btn');
         var hls = new Hls();
 
         function playRadio(name, url, logo, btn) {
@@ -186,9 +270,24 @@
                 player.src = url;
                 player.play();
             }
+
+            eqBox.classList.add('playing');
+            toggleBtn.innerHTML = "⏸ PAUSE";
         }
 
-        // Auto play radio pertama (Suria FM) bila buka app
+        function togglePlay() {
+            if (player.paused) {
+                player.play();
+                eqBox.classList.add('playing');
+                toggleBtn.innerHTML = "⏸ PAUSE";
+            } else {
+                player.pause();
+                eqBox.classList.remove('playing');
+                toggleBtn.innerHTML = "▶ PLAY";
+            }
+        }
+
+        // Auto play radio pertama bila buka app
         window.onload = function() {
             var firstBtn = document.querySelector('.btn-station');
             playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
