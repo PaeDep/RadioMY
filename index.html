@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio MY</title>
+    <!-- Library hls.js untuk support stream .m3u8 -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Tiada scrollbar */
+            display: flex;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        /* BAHAGIAN KIRI: PLAYER & LOGO */
+        .left-panel {
+            flex: 1;
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .logo-container {
+            flex: 1;
+            width: 100%;
+            max-height: 55vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .station-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00e676;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        /* PLAYER DIKECILKAN */
+        audio {
+            width: 80%; /* Dikecilkan dari 100% ke 80% */
+            height: 32px; /* Tinggi player dikecilkan */
+            outline: none;
+        }
+
+        /* BAHAGIAN KANAN: BUTANG SENARAI RADIO */
+        .right-panel {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+        .header-tag {
+            font-size: 1rem;
+            color: #ffab00;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .station-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-station {
+            background-color: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s;
+            height: 52px;
+        }
+        .btn-station:active, .btn-station.active {
+            background-color: #00e676;
+            color: #000;
+            border-color: #00e676;
+        }
+        .btn-station img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            object-fit: contain;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .btn-station span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- KIRI: AUDIO PLAYER -->
+    <div class="left-panel">
+        <div class="logo-container">
+            <img id="current-logo" src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="Logo Radio">
+        </div>
+        <div class="station-title" id="current-title">Suria FM</div>
+        <audio id="audio-player" controls autoplay></audio>
+    </div>
+
+    <!-- KANAN: BUTANG RADIO MY -->
+    <div class="right-panel">
+        <div class="header-tag"># RADIO MY</div>
+        <div class="station-grid">
+            <button class="btn-station active" onclick="playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', this)">
+                <img src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png"> <span>Suria FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Era FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://d62zl39gesnj2.cloudfront.net/stations/era/2025/era_square_updated.png', this)">
+                <img src="https://d62zl39gesnj2.cloudfront.net/stations/era/2025/era_square_updated.png"> <span>Era FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://revmedia.my/wp-content/uploads/2020/10/RMG-Website-logos-Hotfm2021.png', this)">
+                <img src="https://revmedia.my/wp-content/uploads/2020/10/RMG-Website-logos-Hotfm2021.png"> <span>HOT FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Rakita FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://static.mytuner.mobi/media/tvos_radios/SVzrKCccud.png', this)">
+                <img src="https://static.mytuner.mobi/media/tvos_radios/SVzrKCccud.png"> <span>Rakita FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Sinar FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://d62zl39gesnj2.cloudfront.net/stations/sinar/2025/sinar-square_march_2025.png', this)">
+                <img src="https://d62zl39gesnj2.cloudfront.net/stations/sinar/2025/sinar-square_march_2025.png"> <span>Sinar FM</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var player = document.getElementById('audio-player');
+        var hls = new Hls();
+
+        function playRadio(name, url, logo, btn) {
+            document.getElementById('current-title').innerText = name;
+            document.getElementById('current-logo').src = logo;
+
+            // Highlight butang aktif
+            var buttons = document.querySelectorAll('.btn-station');
+            buttons.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+
+            // Play stream (.m3u8 atau .aac)
+            if (url.endsWith('.m3u8')) {
+                if (Hls.isSupported()) {
+                    hls.destroy();
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(player);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        player.play();
+                    });
+                } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+                    player.src = url;
+                    player.play();
+                }
+            } else {
+                if (hls) { hls.destroy(); }
+                player.src = url;
+                player.play();
+            }
+        }
+
+        // Auto play radio pertama (Suria FM) bila buka app
+        window.onload = function() {
+            var firstBtn = document.querySelector('.btn-station');
+            playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
+        };
+    </script>
+</body>
+</html>
