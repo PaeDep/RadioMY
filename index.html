@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RadioPF - AudD Detection</title>
+    <title>RadioPF</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,6 +19,7 @@
             gap: 16px;
         }
 
+        /* --- PANEL KIRI (KEKAL SEPERTI ASAL) --- */
         .left-panel {
             flex: 1;
             background-color: #1e1e1e;
@@ -127,38 +128,88 @@
             cursor: pointer;
             font-size: 0.85rem;
         }
-        .btn-scan {
-            background-color: #ffab00;
-        }
+        .btn-scan { background-color: #ffab00; }
         audio { display: none; }
 
-        .right-panel { flex: 1.5; display: flex; flex-direction: column; justify-content: center; }
-        .station-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; height: 100%; max-height: 88vh; }
-        .btn-station {
-            background-color: #2a2a2a;
-            border: 2px solid #333;
-            border-radius: 14px;
-            padding: 8px;
-            color: white;
-            cursor: pointer;
+        /* --- PANEL KANAN (UBAH IKUT CITARASA BARU) --- */
+        .right-panel {
+            flex: 1.5;
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* Poster Besar Belah Atas */
+        .poster-container {
+            width: 100%;
+            flex: 1;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #141414;
+            margin-bottom: 12px;
         }
-        .btn-station.active { background-color: #00e676; color: #000; border-color: #00e676; }
-        .btn-station img { width: 72px; height: 72px; border-radius: 10px; object-fit: contain; background: #fff; padding: 4px; }
-        .btn-station span { font-size: 1rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .poster-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* Susunan Channel Sebaris Kat Bawah (Ikon Sahaja) */
+        .channel-row {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-channel {
+            background-color: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 65px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-channel.active {
+            background-color: #00e676;
+            border-color: #00e676;
+        }
+
+        .btn-channel img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #fff;
+            padding: 2px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- PANEL KIRI (REKA BENTUK KEKAL ASAL) -->
     <div class="left-panel">
         <div class="logo-container">
-            <img id="current-logo" src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="Logo Radio / Album Art">
+            <img id="current-logo" src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="Logo Radio / Album Art">
         </div>
-        <div class="station-title" id="current-title">Suria FM</div>
+        <div class="station-title" id="current-title">ERA FM</div>
 
         <div class="now-playing-box">
             <div class="np-label">🎵 SEDANG DIMAINKAN</div>
@@ -178,164 +229,161 @@
             <button class="btn-scan" onclick="detectSongAudD()">🔍 SCAN LAGU</button>
         </div>
 
-        <audio id="audio-player" crossorigin="anonymous" autoplay></audio>
+        <audio id="audio-player" autoplay></audio>
     </div>
 
+    <!-- PANEL KANAN (POSTER ATAS + CHANNEL SEBARIS DI BAWAH) -->
     <div class="right-panel">
-        <div class="station-grid">
-            <button class="btn-station active" onclick="playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', this)">
-                <img src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png"> <span>Suria FM</span>
+        <div class="poster-container">
+            <img id="side-poster" src="https://era.my/assets/og-image.jpg" alt="Poster Stesen">
+        </div>
+
+        <div class="channel-row">
+            <button class="btn-channel active" onclick="playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="ERA">
             </button>
-            <button class="btn-station" onclick="playRadio('Era FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150"> <span>Era FM</span>
+
+            <button class="btn-channel" onclick="playRadio('SINAR FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330', 'https://assets.astroaudio.com.my/brands_syok/media/uploads/banner/2026-04/1_SYOK-750X422.jpg.jpeg', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330" alt="SINAR">
             </button>
-            <button class="btn-station" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739"> <span>HOT FM</span>
+
+            <button class="btn-channel" onclick="playRadio('SURIA FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', 'https://media.suria.my/wp-content/uploads/2025/11/21112036/SURIA-MAIN-BRANDING_SCREEN-SIZE.jpg', this)">
+                <img src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="SURIA">
             </button>
-            <button class="btn-station" onclick="playRadio('Rakita FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327"> <span>Rakita FM</span>
+
+            <button class="btn-channel" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUWpqV2BKKKtswiMeYUFHQbYEhZg5U9qijgnS4QPrErSnZkh5ISzzDTpU&s=10', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739" alt="HOT">
             </button>
-            <button class="btn-station" onclick="playRadio('Sinar FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330"> <span>Sinar FM</span>
+
+            <button class="btn-channel" onclick="playRadio('GEGAR FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', 'https://media2.fishtank.my/media/gegar/assets/850x480.png?ext=.png', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440" alt="GEGAR">
             </button>
-            <button class="btn-station" onclick="playRadio('Gegar FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440"> <span>Gegar FM</span>
+
+            <button class="btn-channel" onclick="playRadio('RAKITA FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327', 'https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327" alt="RAKITA">
             </button>
         </div>
     </div>
 
     <script>
-     
+        // MASUKKAN API KEY AUDD KAU DI SINI
         const AUDD_API_KEY = "1f8df68c7d8ecb3d3a5e52e37c1e603a";
 
-var player = document.getElementById('audio-player');
-var eqBox = document.getElementById('eq-box');
-var toggleBtn = document.getElementById('toggle-btn');
-var songTitleEl = document.getElementById('song-title');
-var currentLogoEl = document.getElementById('current-logo');
-var hls = new Hls();
-var defaultLogo = '';
+        var player = document.getElementById('audio-player');
+        var eqBox = document.getElementById('eq-box');
+        var toggleBtn = document.getElementById('toggle-btn');
+        var songTitleEl = document.getElementById('song-title');
+        var currentLogoEl = document.getElementById('current-logo');
+        var sidePosterEl = document.getElementById('side-poster');
+        var hls = new Hls();
+        var defaultLogo = '';
 
-function playRadio(name, url, logo, btn) {
-    document.getElementById('current-title').innerText = name;
-    defaultLogo = logo; 
-    currentLogoEl.src = logo;
+        function playRadio(name, url, logo, poster, btn) {
+            document.getElementById('current-title').innerText = name;
+            defaultLogo = logo; 
+            currentLogoEl.src = logo;
+            sidePosterEl.src = poster; // Tukar poster besar kat panel kanan
 
-    document.querySelectorAll('.btn-station').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+            document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-    if (url.endsWith('.m3u8')) {
-        if (Hls.isSupported()) {
-            hls.destroy();
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(player);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
-        } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-            player.src = url;
-            player.play();
-        }
-    } else {
-        if (hls) { hls.destroy(); }
-        player.src = url;
-        player.play();
-    }
-
-    eqBox.classList.add('playing');
-    toggleBtn.innerHTML = "⏸ PAUSE";
-    songTitleEl.innerText = "Siaran Langsung";
-}
-
-// FUNGSI RAKAM AUDIO 5 SAAT & HANTAR KE AUDD
-async function detectSongAudD() {
-    if (!AUDD_API_KEY || AUDD_API_KEY === "MASUKKAN_API_KEY_SEBENAR_KAU_KAT_SINI") {
-        alert("Sila masukkan AudD API Key kau dulu bro!");
-        return;
-    }
-
-    if (player.paused) {
-        alert("Sila mainkan radio dulu sebelum scan!");
-        return;
-    }
-
-    songTitleEl.innerText = "🎙️ Merakam audio 5 saat...";
-
-    try {
-        // 1. Ambil audio stream daripada pemain audio browser
-        let stream = player.captureStream ? player.captureStream() : player.mozCaptureStream();
-        let mediaRecorder = new MediaRecorder(stream);
-        let audioChunks = [];
-
-        mediaRecorder.ondataavailable = event => {
-            audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = async () => {
-            songTitleEl.innerText = "🔍 Mengesan lagu (AudD)...";
-            let audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-
-            // 2. Hantar fail rakaman audio ke AudD API
-            let formData = new FormData();
-            formData.append("api_token", AUDD_API_KEY);
-            formData.append("file", audioBlob, "sample.wav");
-            formData.append("return", "apple_music,spotify");
-
-            let response = await fetch("https://api.audd.io/", {
-                method: "POST",
-                body: formData
-            });
-
-            let result = await response.json();
-
-            if (result.status === "success" && result.result) {
-                let song = result.result;
-                let title = song.title || "Unknown Title";
-                let artist = song.artist || "Unknown Artist";
-
-                songTitleEl.innerText = `${title} - ${artist}`;
-
-                // Ambil gambar album dari Spotify/Apple jika ada
-                if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
-                    currentLogoEl.src = song.spotify.album.images[0].url;
-                } else if (song.apple_music && song.apple_music.artwork) {
-                    let artUrl = song.apple_music.artwork.url.replace('{w}', '300').replace('{h}', '300');
-                    currentLogoEl.src = artUrl;
+            if (url.endsWith('.m3u8')) {
+                if (Hls.isSupported()) {
+                    hls.destroy();
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(player);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
+                } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+                    player.src = url;
+                    player.play();
                 }
             } else {
-                songTitleEl.innerText = "Lagu tak ditemui / Sembang DJ";
+                if (hls) { hls.destroy(); }
+                player.src = url;
+                player.play();
+            }
+
+            eqBox.classList.add('playing');
+            toggleBtn.innerHTML = "⏸ PAUSE";
+            songTitleEl.innerText = "Siaran Langsung";
+        }
+
+        async function detectSongAudD() {
+            if (!AUDD_API_KEY || AUDD_API_KEY === "MASUKKAN_API_KEY_AUDD_KAU_KAT_SINI") {
+                alert("Masukkan AudD API Key dalam kod dulu bro!");
+                return;
+            }
+
+            if (player.paused) {
+                alert("Mainkan radio dulu sebelum scan!");
+                return;
+            }
+
+            songTitleEl.innerText = "🎙️ Merakam audio 5 saat...";
+
+            try {
+                let stream = player.captureStream ? player.captureStream() : player.mozCaptureStream();
+                let mediaRecorder = new MediaRecorder(stream);
+                let audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+
+                mediaRecorder.onstop = async () => {
+                    songTitleEl.innerText = "🔍 Mengesan lagu (AudD)...";
+                    let audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+                    let formData = new FormData();
+                    formData.append("api_token", AUDD_API_KEY);
+                    formData.append("file", audioBlob, "sample.wav");
+                    formData.append("return", "apple_music,spotify");
+
+                    let response = await fetch("https://api.audd.io/", { method: "POST", body: formData });
+                    let result = await response.json();
+
+                    if (result.status === "success" && result.result) {
+                        let song = result.result;
+                        songTitleEl.innerText = `${song.title} - ${song.artist}`;
+
+                        // Tukar gambar logo belah kiri ke Album Art jika jumpa
+                        if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
+                            currentLogoEl.src = song.spotify.album.images[0].url;
+                        } else if (song.apple_music && song.apple_music.artwork) {
+                            let artUrl = song.apple_music.artwork.url.replace('{w}', '300').replace('{h}', '300');
+                            currentLogoEl.src = artUrl;
+                        }
+                    } else {
+                        songTitleEl.innerText = "Lagu tak ditemui / Sembang DJ";
+                        currentLogoEl.src = defaultLogo;
+                    }
+                };
+
+                mediaRecorder.start();
+                setTimeout(() => mediaRecorder.stop(), 5000);
+
+            } catch (err) {
+                console.error(err);
+                songTitleEl.innerText = "Gagal merakam audio";
                 currentLogoEl.src = defaultLogo;
             }
+        }
+
+        function togglePlay() {
+            if (player.paused) {
+                player.play();
+                eqBox.classList.add('playing');
+                toggleBtn.innerHTML = "⏸ PAUSE";
+            } else {
+                player.pause();
+                eqBox.classList.remove('playing');
+                toggleBtn.innerHTML = "▶ PLAY";
+            }
+        }
+
+        window.onload = function() {
+            var firstBtn = document.querySelector('.btn-channel');
+            playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://era.my/assets/og-image.jpg', firstBtn);
         };
-
-        // Rakam selama 5 saat
-        mediaRecorder.start();
-        setTimeout(() => {
-            mediaRecorder.stop();
-        }, 5000);
-
-    } catch (err) {
-        console.error("AudD Error:", err);
-        songTitleEl.innerText = "Gagal merakam audio";
-        currentLogoEl.src = defaultLogo;
-    }
-}
-
-function togglePlay() {
-    if (player.paused) {
-        player.play();
-        eqBox.classList.add('playing');
-        toggleBtn.innerHTML = "⏸ PAUSE";
-    } else {
-        player.pause();
-        eqBox.classList.remove('playing');
-        toggleBtn.innerHTML = "▶ PLAY";
-    }
-}
-
-window.onload = function() {
-    var firstBtn = document.querySelector('.btn-station');
-    playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
-};
-   </script>
+    </script>
 </body>
 </html>
