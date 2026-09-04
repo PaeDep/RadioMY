@@ -268,7 +268,7 @@
     </div>
 
     <script>
-        const AUDD_API_KEY = 'b36cd799a2cd1612ca5d36283e44ebb4'; // Masukkan Token AudD API anda
+        const AUDD_API_KEY = 'b36cd799a2cd1612ca5d36283e44ebb4';
         
         var player = document.getElementById('audio-player');
         var eqBox = document.getElementById('eq-box');
@@ -307,26 +307,30 @@
             eqBox.classList.add('playing');
             toggleBtn.innerHTML = "⏸ PAUSE";
 
-            // Semak tajuk lagu serta-merta & set selang masa setiap 20 saat
+            // Semak tajuk lagu serta-merta & set selang masa setiap 25 saat
+            songTitleEl.innerText = "Mengesan lagu...";
             fetchSongMetadata(url);
             if (checkSongInterval) clearInterval(checkSongInterval);
-            checkSongInterval = setInterval(() => fetchSongMetadata(url), 20000);
+            checkSongInterval = setInterval(() => fetchSongMetadata(url), 25000);
         }
 
         async function fetchSongMetadata(streamUrl) {
-            if (!AUDD_API_KEY || AUDD_API_KEY.includes('MASUKKAN_API_KEY')) {
-                songTitleEl.innerText = "Sila Masukkan AudD API Key";
-                return;
-            }
-
             try {
-                let response = await fetch(`https://api.audd.io/recognize/?url=${encodeURIComponent(streamUrl)}&api_token=${AUDD_API_KEY}`);
+                let formData = new FormData();
+                formData.append('api_token', AUDD_API_KEY);
+                formData.append('url', streamUrl);
+
+                let response = await fetch('https://api.audd.io/', {
+                    method: 'POST',
+                    body: formData
+                });
+
                 let data = await response.json();
 
                 if (data.status === 'success' && data.result) {
                     songTitleEl.innerText = `${data.result.title} - ${data.result.artist}`;
                 } else {
-                    songTitleEl.innerText = "Iklan / Dj Tengah Bercakap";
+                    songTitleEl.innerText = "Iklan / DJ Tengah Bercakap";
                 }
             } catch (error) {
                 console.error("Gagal menarik metadata:", error);
