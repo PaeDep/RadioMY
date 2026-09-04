@@ -40,7 +40,7 @@
         .logo-container {
             flex: 1;
             width: 100%;
-            max-height: 48vh;
+            max-height: 38vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -56,8 +56,35 @@
             font-size: 1.3rem;
             font-weight: bold;
             color: #00e676;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: center;
+        }
+
+        /* RUANGAN TAJUK LAGU (NOW PLAYING) */
+        .now-playing-box {
+            background: #141414;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .np-label {
+            font-size: 0.75rem;
+            color: #ffab00;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .np-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
         }
 
         /* ANIMATED EQUALIZER BARS */
@@ -66,17 +93,17 @@
             align-items: flex-end;
             justify-content: center;
             gap: 4px;
-            height: 35px;
+            height: 30px;
             width: 100%;
             margin-bottom: 10px;
             background: #141414;
-            padding: 6px;
+            padding: 4px;
             border-radius: 8px;
             border: 1px solid #2a2a2a;
         }
         .eq-bar {
             width: 6px;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(to top, #00e676, #00b0ff);
             border-radius: 3px;
             transition: height 0.1s ease;
@@ -100,7 +127,7 @@
 
         @keyframes bounce {
             0% { height: 4px; }
-            100% { height: 28px; }
+            100% { height: 22px; }
         }
 
         /* CONTROLS (STOP / PLAY BUTTON & AUDIO) */
@@ -136,13 +163,6 @@
             justify-content: center;
             gap: 8px;
         }
-        .header-tag {
-            font-size: 1rem;
-            color: #ffab00;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
         .station-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -169,7 +189,6 @@
             color: #000;
             border-color: #00e676;
         }
-        /* SAIS LOGO DIBESARKAN DI SINI */
         .btn-station img {
             width: 72px;
             height: 72px;
@@ -190,12 +209,18 @@
 </head>
 <body>
 
-    <!-- KIRI: AUDIO PLAYER & EQUALIZER -->
+    <!-- KIRI: AUDIO PLAYER, LOGO & NOW PLAYING -->
     <div class="left-panel">
         <div class="logo-container">
             <img id="current-logo" src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="Logo Radio">
         </div>
         <div class="station-title" id="current-title">Suria FM</div>
+
+        <!-- BOX TAJUK LAGU AUTOMATIK -->
+        <div class="now-playing-box">
+            <div class="np-label">🎵 SEDANG DIMAINKAN</div>
+            <div class="np-title" id="song-title">Mengesan lagu...</div>
+        </div>
 
         <!-- BAR EQUALIZER NEON -->
         <div class="eq-container playing" id="eq-box">
@@ -218,7 +243,7 @@
         <audio id="audio-player" autoplay></audio>
     </div>
 
-    <!-- KANAN: BUTANG GRID KOTAK RADIOPF (LOGO BESAR) -->
+    <!-- KANAN: BUTANG GRID KOTAK RADIOPF -->
     <div class="right-panel">
         <div class="station-grid">
             <button class="btn-station active" onclick="playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', this)">
@@ -236,17 +261,21 @@
             <button class="btn-station" onclick="playRadio('Sinar FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330', this)">
                 <img src="https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330"> <span>Sinar FM</span>
             </button>
-             <button class="btn-station" onclick="playRadio('Gegar FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', this)">
+            <button class="btn-station" onclick="playRadio('Gegar FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', this)">
                 <img src="https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440"> <span>Gegar FM</span>
             </button>
         </div>
     </div>
 
     <script>
+        const AUDD_API_KEY = 'b36cd799a2cd1612ca5d36283e44ebb4'; // Masukkan Token AudD API anda
+        
         var player = document.getElementById('audio-player');
         var eqBox = document.getElementById('eq-box');
         var toggleBtn = document.getElementById('toggle-btn');
+        var songTitleEl = document.getElementById('song-title');
         var hls = new Hls();
+        var checkSongInterval = null;
 
         function playRadio(name, url, logo, btn) {
             document.getElementById('current-title').innerText = name;
@@ -277,6 +306,32 @@
 
             eqBox.classList.add('playing');
             toggleBtn.innerHTML = "⏸ PAUSE";
+
+            // Semak tajuk lagu serta-merta & set selang masa setiap 20 saat
+            fetchSongMetadata(url);
+            if (checkSongInterval) clearInterval(checkSongInterval);
+            checkSongInterval = setInterval(() => fetchSongMetadata(url), 20000);
+        }
+
+        async function fetchSongMetadata(streamUrl) {
+            if (!AUDD_API_KEY || AUDD_API_KEY.includes('MASUKKAN_API_KEY')) {
+                songTitleEl.innerText = "Sila Masukkan AudD API Key";
+                return;
+            }
+
+            try {
+                let response = await fetch(`https://api.audd.io/recognize/?url=${encodeURIComponent(streamUrl)}&api_token=${AUDD_API_KEY}`);
+                let data = await response.json();
+
+                if (data.status === 'success' && data.result) {
+                    songTitleEl.innerText = `${data.result.title} - ${data.result.artist}`;
+                } else {
+                    songTitleEl.innerText = "Iklan / Dj Tengah Bercakap";
+                }
+            } catch (error) {
+                console.error("Gagal menarik metadata:", error);
+                songTitleEl.innerText = "Metadata tidak tersedia";
+            }
         }
 
         function togglePlay() {
