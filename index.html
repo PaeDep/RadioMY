@@ -87,7 +87,6 @@
             animation: bounce 0.8s infinite alternate ease-in-out;
         }
 
-        /* Timing berbeza setiap bar supaya nampak rawak/natural */
         .playing .eq-bar:nth-child(1) { animation-duration: 0.4s; }
         .playing .eq-bar:nth-child(2) { animation-duration: 0.7s; }
         .playing .eq-bar:nth-child(3) { animation-duration: 0.5s; }
@@ -126,61 +125,66 @@
             gap: 6px;
         }
         audio {
-            display: none; /* Sembunyikan player binaan browser untuk kemas */
+            display: none;
         }
 
-        /* BAHAGIAN KANAN: BUTANG SENARAI RADIO */
+        /* BAHAGIAN KANAN: GRID KOTAK LOGO BESAR */
         .right-panel {
-            flex: 1.2;
+            flex: 1.5;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
         .header-tag {
             font-size: 1rem;
             color: #ffab00;
             font-weight: bold;
             letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .station-grid {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
+            height: 100%;
+            max-height: 88vh;
         }
         .btn-station {
             background-color: #2a2a2a;
             border: 2px solid #333;
-            border-radius: 12px;
-            padding: 10px 16px;
+            border-radius: 14px;
+            padding: 8px;
             color: white;
-            font-size: 1.05rem;
-            font-weight: bold;
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 14px;
+            justify-content: center;
+            gap: 6px;
             transition: all 0.2s;
-            height: 52px;
         }
         .btn-station:active, .btn-station.active {
             background-color: #00e676;
             color: #000;
             border-color: #00e676;
         }
+        /* SAIS LOGO DIBESARKAN DI SINI */
         .btn-station img {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
             object-fit: contain;
             background: #fff;
-            flex-shrink: 0;
+            padding: 4px;
         }
         .btn-station span {
+            font-size: 1rem;
+            font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 100%;
         }
     </style>
 </head>
@@ -214,7 +218,7 @@
         <audio id="audio-player" autoplay></audio>
     </div>
 
-    <!-- KANAN: BUTANG RADIOPF -->
+    <!-- KANAN: BUTANG GRID KOTAK RADIOPF (LOGO BESAR) -->
     <div class="right-panel">
         <div class="header-tag">RADIO</div>
         <div class="station-grid">
@@ -246,12 +250,10 @@
             document.getElementById('current-title').innerText = name;
             document.getElementById('current-logo').src = logo;
 
-            // Highlight butang aktif
             var buttons = document.querySelectorAll('.btn-station');
             buttons.forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
 
-            // Play stream (.m3u8 atau .aac)
             if (url.endsWith('.m3u8')) {
                 if (Hls.isSupported()) {
                     hls.destroy();
@@ -287,7 +289,6 @@
             }
         }
 
-        // Auto play radio pertama bila buka app
         window.onload = function() {
             var firstBtn = document.querySelector('.btn-station');
             playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
