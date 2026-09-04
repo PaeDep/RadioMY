@@ -204,113 +204,138 @@
         </div>
     </div>
 
-    </script>
-        // MASUKKAN AUDD API KEY KAU KAT SINI
+    <script>
+     
         const AUDD_API_KEY = "1f8df68c7d8ecb3d3a5e52e37c1e603a";
 
-        var player = document.getElementById('audio-player');
-        var eqBox = document.getElementById('eq-box');
-        var toggleBtn = document.getElementById('toggle-btn');
-        var songTitleEl = document.getElementById('song-title');
-        var currentLogoEl = document.getElementById('current-logo');
-        var hls = new Hls();
-        var defaultLogo = '';
-        var currentStreamUrl = '';
+var player = document.getElementById('audio-player');
+var eqBox = document.getElementById('eq-box');
+var toggleBtn = document.getElementById('toggle-btn');
+var songTitleEl = document.getElementById('song-title');
+var currentLogoEl = document.getElementById('current-logo');
+var hls = new Hls();
+var defaultLogo = '';
 
-        function playRadio(name, url, logo, btn) {
-            document.getElementById('current-title').innerText = name;
-            defaultLogo = logo; 
-            currentLogoEl.src = logo;
-            currentStreamUrl = url;
+function playRadio(name, url, logo, btn) {
+    document.getElementById('current-title').innerText = name;
+    defaultLogo = logo; 
+    currentLogoEl.src = logo;
 
-            document.querySelectorAll('.btn-station').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    document.querySelectorAll('.btn-station').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 
-            if (url.endsWith('.m3u8')) {
-                if (Hls.isSupported()) {
-                    hls.destroy();
-                    hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(player);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
-                } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-                    player.src = url;
-                    player.play();
+    if (url.endsWith('.m3u8')) {
+        if (Hls.isSupported()) {
+            hls.destroy();
+            hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(player);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
+        } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+            player.src = url;
+            player.play();
+        }
+    } else {
+        if (hls) { hls.destroy(); }
+        player.src = url;
+        player.play();
+    }
+
+    eqBox.classList.add('playing');
+    toggleBtn.innerHTML = "⏸ PAUSE";
+    songTitleEl.innerText = "Siaran Langsung";
+}
+
+// FUNGSI RAKAM AUDIO 5 SAAT & HANTAR KE AUDD
+async function detectSongAudD() {
+    if (!AUDD_API_KEY || AUDD_API_KEY === "MASUKKAN_API_KEY_SEBENAR_KAU_KAT_SINI") {
+        alert("Sila masukkan AudD API Key kau dulu bro!");
+        return;
+    }
+
+    if (player.paused) {
+        alert("Sila mainkan radio dulu sebelum scan!");
+        return;
+    }
+
+    songTitleEl.innerText = "🎙️ Merakam audio 5 saat...";
+
+    try {
+        // 1. Ambil audio stream daripada pemain audio browser
+        let stream = player.captureStream ? player.captureStream() : player.mozCaptureStream();
+        let mediaRecorder = new MediaRecorder(stream);
+        let audioChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+            songTitleEl.innerText = "🔍 Mengesan lagu (AudD)...";
+            let audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+            // 2. Hantar fail rakaman audio ke AudD API
+            let formData = new FormData();
+            formData.append("api_token", AUDD_API_KEY);
+            formData.append("file", audioBlob, "sample.wav");
+            formData.append("return", "apple_music,spotify");
+
+            let response = await fetch("https://api.audd.io/", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+
+            if (result.status === "success" && result.result) {
+                let song = result.result;
+                let title = song.title || "Unknown Title";
+                let artist = song.artist || "Unknown Artist";
+
+                songTitleEl.innerText = `${title} - ${artist}`;
+
+                // Ambil gambar album dari Spotify/Apple jika ada
+                if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
+                    currentLogoEl.src = song.spotify.album.images[0].url;
+                } else if (song.apple_music && song.apple_music.artwork) {
+                    let artUrl = song.apple_music.artwork.url.replace('{w}', '300').replace('{h}', '300');
+                    currentLogoEl.src = artUrl;
                 }
             } else {
-                if (hls) { hls.destroy(); }
-                player.src = url;
-                player.play();
-            }
-
-            eqBox.classList.add('playing');
-            toggleBtn.innerHTML = "⏸ PAUSE";
-            songTitleEl.innerText = "Siaran Langsung";
-        }
-
-        async function detectSongAudD() {
-            if (!AUDD_API_KEY || AUDD_API_KEY === "MASUKKAN_API_KEY_AUDD_KAU_KAT_SINI") {
-                alert("Sila masukkan AudD API Key kau dalam kod dulu bro!");
-                return;
-            }
-
-            songTitleEl.innerText = "Mengesan lagu (AudD)...";
-
-            try {
-                // Hantar URL stream radio terus ke AudD.io API
-                let formData = new FormData();
-                formData.append("api_token", AUDD_API_KEY);
-                formData.append("url", currentStreamUrl);
-                formData.append("return", "apple_music,spotify");
-
-                let response = await fetch("https://api.audd.io/", {
-                    method: "POST",
-                    body: formData
-                });
-
-                let result = await response.json();
-
-                if (result.status === "success" && result.result) {
-                    let song = result.result;
-                    let title = song.title || "Unknown Title";
-                    let artist = song.artist || "Unknown Artist";
-
-                    songTitleEl.innerText = `${title} - ${artist}`;
-
-                    // Sekiranya AudD jumpa gambar album dari Spotify/Apple
-                    if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
-                        currentLogoEl.src = song.spotify.album.images[0].url;
-                    } else if (song.apple_music && song.apple_music.artwork) {
-                        let artUrl = song.apple_music.artwork.url.replace('{w}', '300').replace('{h}', '300');
-                        currentLogoEl.src = artUrl;
-                    }
-                } else {
-                    songTitleEl.innerText = "Lagu tak ditemui / Sembang DJ";
-                    currentLogoEl.src = defaultLogo;
-                }
-            } catch (err) {
-                console.error("AudD Error:", err);
-                songTitleEl.innerText = "Gagal mengesan lagu";
+                songTitleEl.innerText = "Lagu tak ditemui / Sembang DJ";
                 currentLogoEl.src = defaultLogo;
             }
-        }
-
-        function togglePlay() {
-            if (player.paused) {
-                player.play();
-                eqBox.classList.add('playing');
-                toggleBtn.innerHTML = "⏸ PAUSE";
-            } else {
-                player.pause();
-                eqBox.classList.remove('playing');
-                toggleBtn.innerHTML = "▶ PLAY";
-            }
-        }
-
-        window.onload = function() {
-            var firstBtn = document.querySelector('.btn-station');
-            playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
         };
-    </script>
+
+        // Rakam selama 5 saat
+        mediaRecorder.start();
+        setTimeout(() => {
+            mediaRecorder.stop();
+        }, 5000);
+
+    } catch (err) {
+        console.error("AudD Error:", err);
+        songTitleEl.innerText = "Gagal merakam audio";
+        currentLogoEl.src = defaultLogo;
+    }
+}
+
+function togglePlay() {
+    if (player.paused) {
+        player.play();
+        eqBox.classList.add('playing');
+        toggleBtn.innerHTML = "⏸ PAUSE";
+    } else {
+        player.pause();
+        eqBox.classList.remove('playing');
+        toggleBtn.innerHTML = "▶ PLAY";
+    }
+}
+
+window.onload = function() {
+    var firstBtn = document.querySelector('.btn-station');
+    playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', firstBtn);
+};
+   </script>
 </body>
 </html>
