@@ -1,9 +1,281 @@
-if (result.status === "success" && result.result) {
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RadioPF - AudD Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .logo-container {
+            flex: 1;
+            width: 100%;
+            max-height: 38vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .station-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00e676;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .now-playing-box {
+            background: #141414;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .np-label {
+            font-size: 0.75rem;
+            color: #ffab00;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .np-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
+        }
+
+        .eq-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            height: 35px;
+            width: 100%;
+            margin-bottom: 10px;
+            background: #141414;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+        }
+        .eq-bar {
+            width: 6px;
+            height: 5px;
+            background: linear-gradient(to top, #00e676, #00b0ff);
+            border-radius: 3px;
+        }
+        .playing .eq-bar { animation: bounce 0.8s infinite alternate ease-in-out; }
+        .playing .eq-bar:nth-child(1) { animation-duration: 0.4s; }
+        .playing .eq-bar:nth-child(2) { animation-duration: 0.7s; }
+        .playing .eq-bar:nth-child(3) { animation-duration: 0.5s; }
+        .playing .eq-bar:nth-child(4) { animation-duration: 0.9s; }
+        .playing .eq-bar:nth-child(5) { animation-duration: 0.6s; }
+        .playing .eq-bar:nth-child(6) { animation-duration: 0.8s; }
+        .playing .eq-bar:nth-child(7) { animation-duration: 0.5s; }
+        .playing .eq-bar:nth-child(8) { animation-duration: 0.7s; }
+        .playing .eq-bar:nth-child(9) { animation-duration: 0.4s; }
+        .playing .eq-bar:nth-child(10){ animation-duration: 0.8s; }
+
+        @keyframes bounce {
+            0% { height: 4px; }
+            100% { height: 28px; }
+        }
+
+        .controls { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; }
+        .btn-playpause, .btn-scan {
+            background-color: #00e676;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-scan {
+            background-color: #ffab00;
+        }
+        audio { display: none; }
+
+        .right-panel { flex: 1.5; display: flex; flex-direction: column; justify-content: center; }
+        .station-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; height: 100%; max-height: 88vh; }
+        .btn-station {
+            background-color: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 14px;
+            padding: 8px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-station.active { background-color: #00e676; color: #000; border-color: #00e676; }
+        .btn-station img { width: 72px; height: 72px; border-radius: 10px; object-fit: contain; background: #fff; padding: 4px; }
+        .btn-station span { font-size: 1rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="left-panel">
+        <div class="logo-container">
+            <img id="current-logo" src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png" alt="Logo Radio / Album Art">
+        </div>
+        <div class="station-title" id="current-title">Suria FM</div>
+
+        <div class="now-playing-box">
+            <div class="np-label">🎵 SEDANG DIMAINKAN</div>
+            <div class="np-title" id="song-title">Klik 'Scan Lagu' atau tunggu...</div>
+        </div>
+
+        <div class="eq-container playing" id="eq-box">
+            <div class="eq-bar"></div><div class="eq-bar"></div>
+            <div class="eq-bar"></div><div class="eq-bar"></div>
+            <div class="eq-bar"></div><div class="eq-bar"></div>
+            <div class="eq-bar"></div><div class="eq-bar"></div>
+            <div class="eq-bar"></div><div class="eq-bar"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-playpause" id="toggle-btn" onclick="togglePlay()">⏸ PAUSE</button>
+            <button class="btn-scan" onclick="detectSongAudD()">🔍 SCAN LAGU</button>
+        </div>
+
+        <audio id="audio-player" crossorigin="anonymous" autoplay></audio>
+    </div>
+
+    <div class="right-panel">
+        <div class="station-grid">
+            <button class="btn-station active" onclick="playRadio('Suria FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png', this)">
+                <img src="https://media.suria.my/wp-content/uploads/2023/07/31100922/suria-logo.png"> <span>Suria FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Era FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150"> <span>Era FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739"> <span>HOT FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Rakita FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327"> <span>Rakita FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Sinar FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330"> <span>Sinar FM</span>
+            </button>
+            <button class="btn-station" onclick="playRadio('Gegar FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', this)">
+                <img src="https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440"> <span>Gegar FM</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // MASUKKAN AUDD API KEY KAU KAT SINI
+        const AUDD_API_KEY = "b36cd799a2cd1612ca5d36283e44ebb4";
+
+        var player = document.getElementById('audio-player');
+        var eqBox = document.getElementById('eq-box');
+        var toggleBtn = document.getElementById('toggle-btn');
+        var songTitleEl = document.getElementById('song-title');
+        var currentLogoEl = document.getElementById('current-logo');
+        var hls = new Hls();
+        var defaultLogo = '';
+        var currentStreamUrl = '';
+
+        function playRadio(name, url, logo, btn) {
+            document.getElementById('current-title').innerText = name;
+            defaultLogo = logo; 
+            currentLogoEl.src = logo;
+            currentStreamUrl = url;
+
+            document.querySelectorAll('.btn-station').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (url.endsWith('.m3u8')) {
+                if (Hls.isSupported()) {
+                    hls.destroy();
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(player);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => player.play());
+                } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+                    player.src = url;
+                    player.play();
+                }
+            } else {
+                if (hls) { hls.destroy(); }
+                player.src = url;
+                player.play();
+            }
+
+            eqBox.classList.add('playing');
+            toggleBtn.innerHTML = "⏸ PAUSE";
+            songTitleEl.innerText = "Siaran Langsung";
+        }
+
+        async function detectSongAudD() {
+            if (!AUDD_API_KEY || AUDD_API_KEY === "b36cd799a2cd1612ca5d36283e44ebb4") {
+                alert("Sila masukkan AudD API Key kau dalam kod dulu bro!");
+                return;
+            }
+
+            songTitleEl.innerText = "Mengesan lagu (AudD)...";
+
+            try {
+                // Hantar URL stream radio terus ke AudD.io API
+                let formData = new FormData();
+                formData.append("api_token", AUDD_API_KEY);
+                formData.append("url", currentStreamUrl);
+                formData.append("return", "apple_music,spotify");
+
+                let response = await fetch("https://api.audd.io/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                let result = await response.json();
+
+                if (result.status === "success" && result.result) {
                     let song = result.result;
                     let title = song.title || "Unknown Title";
                     let artist = song.artist || "Unknown Artist";
 
-                    songTitleEl.innerText = ${title} - ${artist};
+                    songTitleEl.innerText = `${title} - ${artist}`;
 
                     // Sekiranya AudD jumpa gambar album dari Spotify/Apple
                     if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
