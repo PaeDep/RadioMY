@@ -17,24 +17,51 @@
             display: flex;
             padding: 16px;
             gap: 16px;
+            transition: background-color 0.8s ease; /* Transisi lembut semasa tukar warna */
         }
 
-        /* --- PANEL KIRI (KEKAL SEPERTI ASAL) --- */
+        /* --- PANEL KIRI --- */
         .left-panel {
             flex: 1;
-            background-color: #1e1e1e;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+
+        /* JAM & TARIKH (ATAS KIRI) */
+        .clock-container {
+            width: 100%;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .clock-time {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00e676;
+            letter-spacing: 1px;
+        }
+        .clock-date {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            font-weight: 500;
+        }
+
         .logo-container {
             flex: 1;
             width: 100%;
-            max-height: 38vh;
+            max-height: 50vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -48,93 +75,48 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
         .station-title {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #00e676;
+            margin-bottom: 12px;
+            text-align: center;
+            transition: color 0.5s ease;
+        }
+
+        .controls { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
             margin-bottom: 8px;
-            text-align: center;
         }
-
-        .now-playing-box {
-            background: #141414;
-            border: 1px solid #333;
-            border-radius: 8px;
-            width: 100%;
-            padding: 8px 12px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .np-label {
-            font-size: 0.75rem;
-            color: #ffab00;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .np-title {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 2px;
-        }
-
-        .eq-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 4px;
-            height: 35px;
-            width: 100%;
-            margin-bottom: 10px;
-            background: #141414;
-            padding: 6px;
-            border-radius: 8px;
-            border: 1px solid #2a2a2a;
-        }
-        .eq-bar {
-            width: 6px;
-            height: 5px;
-            background: linear-gradient(to top, #00e676, #00b0ff);
-            border-radius: 3px;
-        }
-        .playing .eq-bar { animation: bounce 0.8s infinite alternate ease-in-out; }
-        .playing .eq-bar:nth-child(1) { animation-duration: 0.4s; }
-        .playing .eq-bar:nth-child(2) { animation-duration: 0.7s; }
-        .playing .eq-bar:nth-child(3) { animation-duration: 0.5s; }
-        .playing .eq-bar:nth-child(4) { animation-duration: 0.9s; }
-        .playing .eq-bar:nth-child(5) { animation-duration: 0.6s; }
-        .playing .eq-bar:nth-child(6) { animation-duration: 0.8s; }
-        .playing .eq-bar:nth-child(7) { animation-duration: 0.5s; }
-        .playing .eq-bar:nth-child(8) { animation-duration: 0.7s; }
-        .playing .eq-bar:nth-child(9) { animation-duration: 0.4s; }
-        .playing .eq-bar:nth-child(10){ animation-duration: 0.8s; }
-
-        @keyframes bounce {
-            0% { height: 4px; }
-            100% { height: 28px; }
-        }
-
-        .controls { display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%; }
-        .btn-playpause, .btn-scan {
+        
+        /* BUTANG BULAT IKON SAHAJA */
+        .btn-playstop {
             background-color: #00e676;
             border: none;
             color: #000;
-            font-weight: bold;
-            padding: 8px 14px;
-            border-radius: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,230,118,0.3);
+            transition: all 0.3s ease;
         }
-        .btn-scan { background-color: #ffab00; }
+        .btn-playstop:hover {
+            transform: scale(1.05);
+        }
         audio { display: none; }
 
-        /* --- PANEL KANAN (UBAH IKUT CITARASA BARU) --- */
+        /* --- PANEL KANAN --- */
         .right-panel {
             flex: 1.5;
-            background-color: #1e1e1e;
+            background-color: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 16px;
             display: flex;
@@ -153,7 +135,7 @@
             justify-content: center;
             border-radius: 12px;
             overflow: hidden;
-            background: #141414;
+            background: rgba(20, 20, 20, 0.8);
             margin-bottom: 12px;
         }
         .poster-container img {
@@ -163,7 +145,7 @@
             border-radius: 12px;
         }
 
-        /* Susunan Channel Sebaris Kat Bawah (Ikon Sahaja) */
+        /* Susunan Channel Sebaris Kat Bawah */
         .channel-row {
             display: flex;
             flex-direction: row;
@@ -190,6 +172,7 @@
         .btn-channel.active {
             background-color: #00e676;
             border-color: #00e676;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
         .btn-channel img {
@@ -204,35 +187,26 @@
 </head>
 <body>
 
-    <!-- PANEL KIRI (REKA BENTUK KEKAL ASAL) -->
+    <!-- PANEL KIRI -->
     <div class="left-panel">
+        <div class="clock-container">
+            <div class="clock-time" id="clock-time">00:00:00</div>
+            <div class="clock-date" id="clock-date">Isnin, 1 Jan 2026</div>
+        </div>
+
         <div class="logo-container">
-            <img id="current-logo" src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="Logo Radio / Album Art">
+            <img id="current-logo" crossorigin="anonymous" src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="Logo Radio">
         </div>
         <div class="station-title" id="current-title">ERA FM</div>
 
-        <div class="now-playing-box">
-            <div class="np-label">🎵 SEDANG DIMAINKAN</div>
-            <div class="np-title" id="song-title">Klik 'Scan Lagu' atau tunggu...</div>
-        </div>
-
-        <div class="eq-container playing" id="eq-box">
-            <div class="eq-bar"></div><div class="eq-bar"></div>
-            <div class="eq-bar"></div><div class="eq-bar"></div>
-            <div class="eq-bar"></div><div class="eq-bar"></div>
-            <div class="eq-bar"></div><div class="eq-bar"></div>
-            <div class="eq-bar"></div><div class="eq-bar"></div>
-        </div>
-
         <div class="controls">
-            <button class="btn-playpause" id="toggle-btn" onclick="togglePlay()">⏸ PAUSE</button>
-            <button class="btn-scan" onclick="detectSongAudD()">🔍 SCAN LAGU</button>
+            <button class="btn-playstop" id="toggle-btn" onclick="togglePlay()">⏹</button>
         </div>
 
         <audio id="audio-player" autoplay></audio>
     </div>
 
-    <!-- PANEL KANAN (POSTER ATAS + CHANNEL SEBARIS DI BAWAH) -->
+    <!-- PANEL KANAN -->
     <div class="right-panel">
         <div class="poster-container">
             <img id="side-poster" src="https://era.my/assets/og-image.jpg" alt="Poster Stesen">
@@ -265,24 +239,34 @@
         </div>
     </div>
 
-    <script>
-        // MASUKKAN API KEY AUDD KAU DI SINI
-        const AUDD_API_KEY = "1f8df68c7d8ecb3d3a5e52e37c1e603a";
+    <!-- CANVAS TERSEMBUYI UNTUK EXTRACT WARNA -->
+    <canvas id="color-canvas" style="display:none;"></canvas>
 
+    <script>
         var player = document.getElementById('audio-player');
-        var eqBox = document.getElementById('eq-box');
         var toggleBtn = document.getElementById('toggle-btn');
-        var songTitleEl = document.getElementById('song-title');
         var currentLogoEl = document.getElementById('current-logo');
         var sidePosterEl = document.getElementById('side-poster');
         var hls = new Hls();
-        var defaultLogo = '';
+
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString('ms-MY', timeOptions);
+
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('clock-date').innerText = now.toLocaleDateString('ms-MY', dateOptions);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
         function playRadio(name, url, logo, poster, btn) {
             document.getElementById('current-title').innerText = name;
-            defaultLogo = logo; 
+            
+            // Set logo gambar dengan mod crossOrigin untuk analisa warna
+            currentLogoEl.crossOrigin = "Anonymous";
             currentLogoEl.src = logo;
-            sidePosterEl.src = poster; // Tukar poster besar kat panel kanan
+            sidePosterEl.src = poster;
 
             document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -304,85 +288,85 @@
                 player.play();
             }
 
-            eqBox.classList.add('playing');
-            toggleBtn.innerHTML = "⏸ PAUSE";
-            songTitleEl.innerText = "Siaran Langsung";
+            toggleBtn.innerText = "⏹";
+
+            // Ekstrak warna selepas gambar selesai muat turun
+            currentLogoEl.onload = function() {
+                applyThemeFromLogo(currentLogoEl, btn);
+            };
         }
 
-        async function detectSongAudD() {
-            if (!AUDD_API_KEY || AUDD_API_KEY === "MASUKKAN_API_KEY_AUDD_KAU_KAT_SINI") {
-                alert("Masukkan AudD API Key dalam kod dulu bro!");
-                return;
-            }
-
-            if (player.paused) {
-                alert("Mainkan radio dulu sebelum scan!");
-                return;
-            }
-
-            songTitleEl.innerText = "🎙️ Merakam audio 5 saat...";
-
+        // FUNGSI UTAMA UNTUK MENGAMBIL WARNA LOGO DAN TUKAR TEMA
+        function applyThemeFromLogo(imgEl, activeBtn) {
             try {
-                let stream = player.captureStream ? player.captureStream() : player.mozCaptureStream();
-                let mediaRecorder = new MediaRecorder(stream);
-                let audioChunks = [];
+                var canvas = document.getElementById('color-canvas');
+                var ctx = canvas.getContext('2d');
+                canvas.width = imgEl.naturalWidth || imgEl.width;
+                canvas.height = imgEl.naturalHeight || imgEl.height;
 
-                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+                var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-                mediaRecorder.onstop = async () => {
-                    songTitleEl.innerText = "🔍 Mengesan lagu (AudD)...";
-                    let audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                var r = 0, g = 0, b = 0, count = 0;
+                
+                // Ambil sampel piksel (langkah 20 piksel untuk kelajuan)
+                for (var i = 0; i < imageData.length; i += 4 * 20) {
+                    var red = imageData[i];
+                    var green = imageData[i + 1];
+                    var blue = imageData[i + 2];
+                    var alpha = imageData[i + 3];
 
-                    let formData = new FormData();
-                    formData.append("api_token", AUDD_API_KEY);
-                    formData.append("file", audioBlob, "sample.wav");
-                    formData.append("return", "apple_music,spotify");
-
-                    let response = await fetch("https://api.audd.io/", { method: "POST", body: formData });
-                    let result = await response.json();
-
-                    if (result.status === "success" && result.result) {
-                        let song = result.result;
-                        songTitleEl.innerText = `${song.title} - ${song.artist}`;
-
-                        // Tukar gambar logo belah kiri ke Album Art jika jumpa
-                        if (song.spotify && song.spotify.album && song.spotify.album.images.length > 0) {
-                            currentLogoEl.src = song.spotify.album.images[0].url;
-                        } else if (song.apple_music && song.apple_music.artwork) {
-                            let artUrl = song.apple_music.artwork.url.replace('{w}', '300').replace('{h}', '300');
-                            currentLogoEl.src = artUrl;
-                        }
-                    } else {
-                        songTitleEl.innerText = "Lagu tak ditemui / Sembang DJ";
-                        currentLogoEl.src = defaultLogo;
+                    // Abai piksel telus / terlalu putih / terlalu gelap
+                    if (alpha > 128 && !(red > 240 && green > 240 && blue > 240) && !(red < 15 && green < 15 && blue < 15)) {
+                        r += red;
+                        g += green;
+                        b += blue;
+                        count++;
                     }
-                };
+                }
 
-                mediaRecorder.start();
-                setTimeout(() => mediaRecorder.stop(), 5000);
+                if (count > 0) {
+                    r = Math.floor(r / count);
+                    g = Math.floor(g / count);
+                    b = Math.floor(b / count);
+                } else {
+                    // Warna default jika gagal baca
+                    r = 0; g = 230; b = 118;
+                }
 
-            } catch (err) {
-                console.error(err);
-                songTitleEl.innerText = "Gagal merakam audio";
-                currentLogoEl.src = defaultLogo;
+                // Tukar latar belakang body dengan gradien yang gelap & berasaskan warna logo
+                document.body.style.backgroundColor = `rgb(${Math.floor(r * 0.15)}, ${Math.floor(g * 0.15)}, ${Math.floor(b * 0.15)})`;
+
+                var dominantColor = `rgb(${r}, ${g}, ${b})`;
+                
+                // Kemaskini warna butang & tajuk mengikut warna logo
+                document.getElementById('current-title').style.color = dominantColor;
+                document.getElementById('clock-time').style.color = dominantColor;
+                toggleBtn.style.backgroundColor = dominantColor;
+                
+                if (activeBtn) {
+                    activeBtn.style.backgroundColor = dominantColor;
+                    activeBtn.style.borderColor = dominantColor;
+                }
+
+            } catch (e) {
+                console.log("CORS restriction or image load error, falling back to default.", e);
             }
         }
 
         function togglePlay() {
             if (player.paused) {
                 player.play();
-                eqBox.classList.add('playing');
-                toggleBtn.innerHTML = "⏸ PAUSE";
+                toggleBtn.innerText = "⏹";
             } else {
                 player.pause();
-                eqBox.classList.remove('playing');
-                toggleBtn.innerHTML = "▶ PLAY";
+                toggleBtn.innerText = "▶";
             }
         }
 
         window.onload = function() {
             var firstBtn = document.querySelector('.btn-channel');
-            playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://era.my/assets/og-image.jpg', firstBtn);
+            playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', firstBtn);
         };
     </script>
 </body>
