@@ -8,7 +8,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #121212;
+            background-color: #0b1a10; /* Default tint ERA */
             color: #ffffff;
             font-family: Arial, sans-serif;
             height: 100vh;
@@ -17,13 +17,13 @@
             display: flex;
             padding: 16px;
             gap: 16px;
-            transition: background-color 0.8s ease; /* Transisi lembut semasa tukar warna */
+            transition: background-color 0.6s ease;
         }
 
         /* --- PANEL KIRI --- */
         .left-panel {
             flex: 1;
-            background-color: rgba(30, 30, 30, 0.85);
+            background-color: rgba(25, 25, 25, 0.85);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 16px;
@@ -34,10 +34,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* JAM & TARIKH (ATAS KIRI) */
+        /* JAM & TARIKH */
         .clock-container {
             width: 100%;
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(15, 15, 15, 0.8);
             border: 1px solid #333;
             border-radius: 12px;
             padding: 8px 16px;
@@ -51,6 +51,7 @@
             font-weight: bold;
             color: #00e676;
             letter-spacing: 1px;
+            transition: color 0.5s ease;
         }
         .clock-date {
             font-size: 0.85rem;
@@ -72,7 +73,6 @@
             max-height: 100%;
             object-fit: contain;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
         .station-title {
             font-size: 1.4rem;
@@ -91,7 +91,6 @@
             margin-bottom: 8px;
         }
         
-        /* BUTANG BULAT IKON SAHAJA */
         .btn-playstop {
             background-color: #00e676;
             border: none;
@@ -104,7 +103,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,230,118,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
         .btn-playstop:hover {
@@ -115,7 +114,7 @@
         /* --- PANEL KANAN --- */
         .right-panel {
             flex: 1.5;
-            background-color: rgba(30, 30, 30, 0.85);
+            background-color: rgba(25, 25, 25, 0.85);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 16px;
@@ -126,7 +125,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* Poster Besar Belah Atas */
         .poster-container {
             width: 100%;
             flex: 1;
@@ -135,7 +133,7 @@
             justify-content: center;
             border-radius: 12px;
             overflow: hidden;
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(15, 15, 15, 0.8);
             margin-bottom: 12px;
         }
         .poster-container img {
@@ -145,7 +143,6 @@
             border-radius: 12px;
         }
 
-        /* Susunan Channel Sebaris Kat Bawah */
         .channel-row {
             display: flex;
             flex-direction: row;
@@ -172,7 +169,6 @@
         .btn-channel.active {
             background-color: #00e676;
             border-color: #00e676;
-            transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
         .btn-channel img {
@@ -195,7 +191,7 @@
         </div>
 
         <div class="logo-container">
-            <img id="current-logo" crossorigin="anonymous" src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="Logo Radio">
+            <img id="current-logo" src="https://upload.wikimedia.org/wikipedia/commons/6/67/ERA_logo_%282018%29.svg" alt="Logo Radio">
         </div>
         <div class="station-title" id="current-title">ERA FM</div>
 
@@ -209,39 +205,41 @@
     <!-- PANEL KANAN -->
     <div class="right-panel">
         <div class="poster-container">
-            <img id="side-poster" src="https://era.my/assets/og-image.jpg" alt="Poster Stesen">
+            <img id="side-poster" src="https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png" alt="Poster Stesen">
         </div>
 
         <div class="channel-row">
-            <button class="btn-channel active" onclick="playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150" alt="ERA">
+            <!-- ERA (Hijau) -->
+            <button class="btn-channel active" onclick="playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://upload.wikimedia.org/wikipedia/commons/6/67/ERA_logo_%282018%29.svg', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', '#00e676', '#0a2215', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/ERA_logo_%282018%29.svg" alt="ERA">
             </button>
 
-            <button class="btn-channel" onclick="playRadio('SINAR FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330', 'https://assets.astroaudio.com.my/brands_syok/media/uploads/banner/2026-04/1_SYOK-750X422.jpg.jpeg', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/6/62/Sinar_%282018%29.svg/revision/latest?cb=20240711082330" alt="SINAR">
+            <!-- SINAR (Biru) -->
+            <button class="btn-channel" onclick="playRadio('SINAR FM', 'https://n07-us.rcs.revma.com/azatk0tbv4uvv/7_13wyqvlqxz91t02/playlist.m3u8', 'https://upload.wikimedia.org/wikipedia/commons/6/62/Sinar_%282018%29.svg', 'https://assets.astroaudio.com.my/brands_syok/media/uploads/banner/2026-04/1_SYOK-750X422.jpg.jpeg', '#00b0ff', '#081c29', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/62/Sinar_%282018%29.svg" alt="SINAR">
             </button>
 
-            <button class="btn-channel" onclick="playRadio('SURIA FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac',
-'https://cdn.starmediagroup.my/wp-content/uploads/2015/04/14192130/OurBrands_Suria.png', 'https://media.suria.my/wp-content/uploads/2025/11/21112036/SURIA-MAIN-BRANDING_SCREEN-SIZE.jpg', this)">
-                <img src="https://cdn.starmediagroup.my/wp-content/uploads/2015/04/14192130/OurBrands_Suria.png" alt="SURIA">
+            <!-- SURIA (Oren) - Logo Dibaiki -->
+            <button class="btn-channel" onclick="playRadio('SURIA FM', 'https://27223.live.streamtheworld.com/SURIA_FMAAC.aac', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Suria_FM_logo.png/600px-Suria_FM_logo.png', 'https://media.suria.my/wp-content/uploads/2025/11/21112036/SURIA-MAIN-BRANDING_SCREEN-SIZE.jpg', '#ff9100', '#291808', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Suria_FM_logo.png/600px-Suria_FM_logo.png" alt="SURIA">
             </button>
 
-            <button class="btn-channel" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUWpqV2BKKKtswiMeYUFHQbYEhZg5U9qijgnS4QPrErSnZkh5ISzzDTpU&s=10', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/0/0f/Hot_FM_logo_%282021%29.svg/revision/latest/scale-to-width-down/1000?cb=20240630020739" alt="HOT">
+            <!-- HOT (Merah) -->
+            <button class="btn-channel" onclick="playRadio('HOT FM', 'https://n01-us.rcs.revma.com/drakdf8mtd3vv/1_1ba7nuwcvljad02/playlist.m3u8', 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Hot_FM_logo_%282021%29.svg', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUWpqV2BKKKtswiMeYUFHQbYEhZg5U9qijgnS4QPrErSnZkh5ISzzDTpU&s=10', '#ff1744', '#2b0a10', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Hot_FM_logo_%282021%29.svg" alt="HOT">
             </button>
 
-            <button class="btn-channel" onclick="playRadio('GEGAR FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440', 'https://media2.fishtank.my/media/gegar/assets/850x480.png?ext=.png', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/1/12/Gegar_%282018%29.svg/revision/latest?cb=20240715133440" alt="GEGAR">
+            <!-- GEGAR (Kelabu/Biru Perak) -->
+            <button class="btn-channel" onclick="playRadio('GEGAR FM', 'https://n04-us.rcs.revma.com/cn0zcqsbv4uvv/4_kifdxur9y8nc02/playlist.m3u8', 'https://upload.wikimedia.org/wikipedia/commons/1/12/Gegar_%282018%29.svg', 'https://media2.fishtank.my/media/gegar/assets/850x480.png?ext=.png', '#29b6f6', '#091f28', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Gegar_%282018%29.svg" alt="GEGAR">
             </button>
 
-            <button class="btn-channel" onclick="playRadio('RAKITA FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327', 'https://assets.astroaudio.com.my/brands_syok/media/Article/2022/Jul/21/rakita_syok_still.jpg', this)">
-                <img src="https://static.wikia.nocookie.net/logopedia/images/a/ab/RAKITA.png/revision/latest?cb=20221013034327" alt="RAKITA">
+            <!-- RAKITA (Kuning) -->
+            <button class="btn-channel" onclick="playRadio('RAKITA FM', 'https://22283.live.streamtheworld.com/RAKITAAAC.aac', 'https://upload.wikimedia.org/wikipedia/commons/a/ab/RAKITA.png', 'https://assets.astroaudio.com.my/brands_syok/media/Article/2022/Jul/21/rakita_syok_still.jpg', '#ffd600', '#2b2408', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/RAKITA.png" alt="RAKITA">
             </button>
         </div>
     </div>
-
-    <!-- CANVAS TERSEMBUYI UNTUK EXTRACT WARNA -->
-    <canvas id="color-canvas" style="display:none;"></canvas>
 
     <script>
         var player = document.getElementById('audio-player');
@@ -261,17 +259,29 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        function playRadio(name, url, logo, poster, btn) {
+        // FUNGSI PLAY & TUKAR WARNA DENGAN PARAMETER WARNA KHUSUS
+        function playRadio(name, url, logo, poster, accentColor, bgTint, btn) {
             document.getElementById('current-title').innerText = name;
-            
-            // Set logo gambar dengan mod crossOrigin untuk analisa warna
-            currentLogoEl.crossOrigin = "Anonymous";
             currentLogoEl.src = logo;
             sidePosterEl.src = poster;
 
-            document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            // Tukar warna tajuk, jam, butang play & latar belakang
+            document.body.style.backgroundColor = bgTint;
+            document.getElementById('current-title').style.color = accentColor;
+            document.getElementById('clock-time').style.color = accentColor;
+            toggleBtn.style.backgroundColor = accentColor;
 
+            // Aktifkan border & warna pada ikon stesen pilihan
+            document.querySelectorAll('.btn-channel').forEach(b => {
+                b.classList.remove('active');
+                b.style.backgroundColor = '#2a2a2a';
+                b.style.borderColor = '#333';
+            });
+            btn.classList.add('active');
+            btn.style.backgroundColor = accentColor;
+            btn.style.borderColor = accentColor;
+
+            // Logik memainkan stream audio
             if (url.endsWith('.m3u8')) {
                 if (Hls.isSupported()) {
                     hls.destroy();
@@ -290,69 +300,6 @@
             }
 
             toggleBtn.innerText = "⏹";
-
-            // Ekstrak warna selepas gambar selesai muat turun
-            currentLogoEl.onload = function() {
-                applyThemeFromLogo(currentLogoEl, btn);
-            };
-        }
-
-        // FUNGSI UTAMA UNTUK MENGAMBIL WARNA LOGO DAN TUKAR TEMA
-        function applyThemeFromLogo(imgEl, activeBtn) {
-            try {
-                var canvas = document.getElementById('color-canvas');
-                var ctx = canvas.getContext('2d');
-                canvas.width = imgEl.naturalWidth || imgEl.width;
-                canvas.height = imgEl.naturalHeight || imgEl.height;
-
-                ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
-                var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-                var r = 0, g = 0, b = 0, count = 0;
-                
-                // Ambil sampel piksel (langkah 20 piksel untuk kelajuan)
-                for (var i = 0; i < imageData.length; i += 4 * 20) {
-                    var red = imageData[i];
-                    var green = imageData[i + 1];
-                    var blue = imageData[i + 2];
-                    var alpha = imageData[i + 3];
-
-                    // Abai piksel telus / terlalu putih / terlalu gelap
-                    if (alpha > 128 && !(red > 240 && green > 240 && blue > 240) && !(red < 15 && green < 15 && blue < 15)) {
-                        r += red;
-                        g += green;
-                        b += blue;
-                        count++;
-                    }
-                }
-
-                if (count > 0) {
-                    r = Math.floor(r / count);
-                    g = Math.floor(g / count);
-                    b = Math.floor(b / count);
-                } else {
-                    // Warna default jika gagal baca
-                    r = 0; g = 230; b = 118;
-                }
-
-                // Tukar latar belakang body dengan gradien yang gelap & berasaskan warna logo
-                document.body.style.backgroundColor = `rgb(${Math.floor(r * 0.15)}, ${Math.floor(g * 0.15)}, ${Math.floor(b * 0.15)})`;
-
-                var dominantColor = `rgb(${r}, ${g}, ${b})`;
-                
-                // Kemaskini warna butang & tajuk mengikut warna logo
-                document.getElementById('current-title').style.color = dominantColor;
-                document.getElementById('clock-time').style.color = dominantColor;
-                toggleBtn.style.backgroundColor = dominantColor;
-                
-                if (activeBtn) {
-                    activeBtn.style.backgroundColor = dominantColor;
-                    activeBtn.style.borderColor = dominantColor;
-                }
-
-            } catch (e) {
-                console.log("CORS restriction or image load error, falling back to default.", e);
-            }
         }
 
         function togglePlay() {
@@ -367,7 +314,7 @@
 
         window.onload = function() {
             var firstBtn = document.querySelector('.btn-channel');
-            playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://static.wikia.nocookie.net/logopedia/images/6/67/ERA_logo_%282018%29.svg/revision/latest?cb=20240711074150', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', firstBtn);
+            playRadio('ERA FM', 'https://n05-us.rcs.revma.com/crec9cmbv4uvv/5_12hts4a4zpu1002/playlist.m3u8', 'https://upload.wikimedia.org/wikipedia/commons/6/67/ERA_logo_%282018%29.svg', 'https://media2.fishtank.my/media/era/assets2/gambar/era26-newkv-750x422.png', '#00e676', '#0a2215', firstBtn);
         };
     </script>
 </body>
